@@ -3,6 +3,7 @@ import java.util.*;
 public class Critical
 {
     public static String[] pool = new String[125];
+    public static String[] array = new String[100];
 
     public static int randomLength() {
         Random r = new Random();
@@ -30,9 +31,17 @@ public class Critical
         }
     }
 
+    public static void fillArray() {
+        for(int i = 0; i < 100; i++){ 
+            int num = (int)(Math.random() * 125);
+            array[i] = pool[num];
+        }
+    }
+
     public static void main(String[] args)
     {
         fillPool();
+        fillArray();
         for(int i = 0; i < pool.length; i++){
             System.out.println(pool[i]);
         }
