@@ -2,8 +2,10 @@ import java.util.*;
 
 public class Critical
 {
-    public static String[] pool = new String[125];
-    public static String[] array = new String[100];
+    public static int poolSize = 125;
+    public static int arraySize = 100;
+    public static String[] pool = new String[poolSize];
+    public static String[] array = new String[arraySize];
 
     public static int randomLength(int min, int max) {
         return min + (int)(Math.random() * max);
@@ -30,8 +32,8 @@ public class Critical
     }
 
     public static void fillArray() {
-        for(int i = 0; i < 100; i++){ 
-            int num = randomLength(0, 125);
+        for(int i = 0; i < arraySize; i++){ 
+            int num = randomLength(0, poolSize);
             array[i] = pool[num];
         }
     }
@@ -47,7 +49,7 @@ public class Critical
     }
 
     public static int occurences() {
-        String randomString = pool[randomLength(0,125)];
+        String randomString = pool[randomLength(0,poolSize)];
         int count = 0;
 
         for(int i = 0; i < array.length; i++) {
@@ -59,8 +61,8 @@ public class Critical
     }
 
     public static void replace() {
-        String randomOne = pool[randomLength(0,125)];
-        String randomTwo = pool[randomLength(0,125)];
+        String randomOne = pool[randomLength(0,poolSize)];
+        String randomTwo = pool[randomLength(0,poolSize)];
 
         for(int i = 0; i < array.length; i++) {
             if (randomOne.equals(array[i]))
