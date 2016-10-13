@@ -38,45 +38,10 @@ public class Critical
         }
     }
 
-    public static void runOperation() {
-        int num = randomLength(0, 2500);
-
-        if (num < 1900) {
-            System.out.println(occurences());
-        } else {
-            replace();
-        }
-    }
-
-    public static int occurences() {
-        String randomString = pool[randomLength(0,poolSize)];
-        int count = 0;
-
-        for(int i = 0; i < array.length; i++) {
-            if (randomString.equals(array[i]))
-                count++;
-        }
-
-        return count;
-    }
-
-    public static void replace() {
-        String randomOne = pool[randomLength(0,poolSize)];
-        String randomTwo = pool[randomLength(0,poolSize)];
-
-        for(int i = 0; i < array.length; i++) {
-            if (randomOne.equals(array[i]))
-                array[i] = randomTwo;
-        }
-    }
-
     public static void main(String[] args)
     {
         fillPool();
         fillArray();
-        for (int i = 0; i < 500; i++) {
-            runOperation();
-        }
         
         DopeThread dope = new DopeThread();
         Thread t = new Thread(dope);
