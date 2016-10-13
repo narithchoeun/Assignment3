@@ -4,6 +4,7 @@ public class Critical
 {
     public static int poolSize = 125;
     public static int arraySize = 100;
+    public static int numberOfThreads = 500;
     public static String[] pool = new String[poolSize];
     public static String[] array = new String[arraySize];
 
@@ -43,8 +44,10 @@ public class Critical
         fillPool();
         fillArray();
         
-        DopeThread dope = new DopeThread();
-        Thread t = new Thread(dope);
-        t.start();
+        for (int i = 0; i < numberOfThreads; i++) {
+            DopeThread dope = new DopeThread();
+            Thread t = new Thread(dope);
+            t.start();
+        }
     }
 }

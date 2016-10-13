@@ -2,16 +2,17 @@ import java.util.concurrent.locks.ReentrantLock;
 
 class DopeThread implements Runnable 
 {
-    private ReentrantLock lock = new ReentrantLock();
+    private static ReentrantLock lock = new ReentrantLock();
 
     public void run() {
-        try {
-            Thread.sleep(1);
-        } catch (InterruptedException e) {
-            System.out.println(e);
-        }
+        // try {
+        //     Thread.sleep(1);
+        // } catch (InterruptedException e) {
+        //     System.out.println(e);
+        // }
 
-        System.out.println("Narith sucks");
+        // System.out.println("Narith sucks");
+        runOperation();
     }
 
     public static void runOperation() {
@@ -29,8 +30,17 @@ class DopeThread implements Runnable
         int count = 0;
 
         for(int i = 0; i < Critical.array.length; i++) {
-            if (randomString.equals(Critical.array[i]))
-                count++;
+        	if (randomString.equals(Critical.array[i])) {
+        		lock.lock();
+
+        		try {
+	        		count++;
+	        	}  catch (Exception e) {
+		            e.printStackTrace();
+	         	} finally {
+	            	lock.unlock();
+	            }
+        	}
         }
 
         return count;
@@ -41,8 +51,17 @@ class DopeThread implements Runnable
         String randomTwo = Critical.pool[Critical.randomLength(0,Critical.poolSize)];
 
         for(int i = 0; i < Critical.array.length; i++) {
-            if (randomOne.equals(Critical.array[i]))
-                Critical.array[i] = randomTwo;
+            if (randomOne.equals(Critical.array[i])){
+            	lock.lock();
+
+            	try {
+            		Critical.array[i] = randomTwo;
+            	} catch (Exception e) {
+            		e.printStackTrace();
+            	} finally {
+            		lock.unlock();
+            	}
+            }
         }
     }
 }
