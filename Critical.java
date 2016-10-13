@@ -44,8 +44,8 @@ public class Critical
         fillPool();
         fillArray();
         
+        DopeThread dope = new DopeThread();
         for (int i = 0; i < numberOfThreads; i++) {
-            DopeThread dope = new DopeThread();
             Thread t = new Thread(dope);
             t.start();
         }
