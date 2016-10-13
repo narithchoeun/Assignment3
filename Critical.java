@@ -77,5 +77,9 @@ public class Critical
         for (int i = 0; i < 500; i++) {
             runOperation();
         }
+        
+        DopeThread dope = new DopeThread();
+        Thread t = new Thread(dope);
+        t.start();
     }
 }
