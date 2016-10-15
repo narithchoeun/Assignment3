@@ -4,7 +4,7 @@ public class Critical
 {
     public static int poolSize = 125;
     public static int arraySize = 100;
-    public static int numberOfThreads = 500;
+    public static int numberOfThreads = 20;
     public static String[] pool = new String[poolSize];
     public static String[] array = new String[arraySize];
 
