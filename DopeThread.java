@@ -4,7 +4,7 @@ class DopeThread implements Runnable
 {
     private ReentrantLock lock = new ReentrantLock();
     private int operationCount = 1;
-    private long totalSearchTime = 0, totalReplaceTime = 0;
+    private long totalSearchWaitTime = 0, totalReplaceWaitTime = 0;
     
     //runs thread for a set amount of operations
     public void run() {
@@ -26,12 +26,12 @@ class DopeThread implements Runnable
           System.out.println(Thread.currentThread().getName() + " finding occurences.");
         	if (occurences() == 0)
         		System.out.println(Thread.currentThread().getName() + " did not find any occurences" );
-        	System.out.println(Thread.currentThread().getName() + " totalSearchTime: " + totalSearchTime);
+        	System.out.println(Thread.currentThread().getName() + " totalSearchWaitTime: " + totalSearchWaitTime);
         	
         } else {
         	System.out.println(Thread.currentThread().getName() + " replacing.");
           replace();
-        	System.out.println(Thread.currentThread().getName() + " totalReplaceTime: " + totalReplaceTime);
+        	System.out.println(Thread.currentThread().getName() + " totalReplaceWaitTime: " + totalReplaceWaitTime);
         }
     }
 
@@ -52,7 +52,7 @@ class DopeThread implements Runnable
         		try {
         			endTime = System.nanoTime();
         			totalTime = endTime - startTime;
-        			totalSearchTime += totalTime;
+        			totalSearchWaitTime += totalTime;
         			System.out.println(Thread.currentThread().getName() + " waited " + totalTime + "ns to find " + randomString);
 	        		count++;
 	        	} catch (Exception e) {
@@ -76,13 +76,14 @@ class DopeThread implements Runnable
         System.out.println(Thread.currentThread().getName() + " trying to replace " + randomOne + " with " + randomTwo);
         for(int i = 0; i < Critical.array.length; i++) {
             if (randomOne.equals(Critical.array[i])){
-         
-            	lock.lock();
+          		System.out.println(Thread.currentThread().getName() + " contains " + randomOne + " attempting to lock");
             	startTime = System.nanoTime();
+            	lock.lock();
+          		System.out.println(Thread.currentThread().getName() + " locked critical section");
             	try {
             		endTime = System.nanoTime();
             		totalTime = endTime - startTime;
-            		totalReplaceTime += totalTime;
+            		totalReplaceWaitTime += totalTime;
             		System.out.println(Thread.currentThread().getName() + " waited " + totalTime + "ns to replace " + Critical.array[i] + " to " + randomTwo);
             		Critical.array[i] = randomTwo;
             		break;
