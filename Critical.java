@@ -1,5 +1,3 @@
-import java.util.*;
-
 public class Critical
 {
     public static int poolSize = 12;
