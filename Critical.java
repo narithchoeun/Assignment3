@@ -2,14 +2,16 @@ public class Critical
 {
     public static int poolSize = 12;
     public static int arraySize = 10;
-    public static int numberOfThreads = 4;
+    public static int numberOfThreads = 3;
     public static String[] pool = new String[poolSize];
     public static String[] array = new String[arraySize];
 
+    //returns random int between the min and max parameters
     public static int randomLength(int min, int max) {
         return min + (int)(Math.random() * max);
     }
 
+    //generates a random string with a random length
     public static String randomString() {
         String letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String temp = "";
@@ -23,12 +25,14 @@ public class Critical
         return temp;
     }
 
+    //fill up the shared pool 
     public static void fillPool() {
         for(int i = 0; i < pool.length; i++) {
             pool[i] = randomString();
         }
     }
 
+    //fill up the shared array 
     public static void fillArray() {
         for(int i = 0; i < arraySize; i++){ 
             int num = randomLength(0, poolSize);
@@ -36,16 +40,17 @@ public class Critical
         }
     }
 
+    
     public static void main(String[] args)
     {
         fillPool();
         fillArray();
         
-        System.out.print("pool:");
-        for(int i = 0; i < pool.length; i++){
-        	System.out.print(pool[i] + " ");
-        }
-        System.out.println();
+//        System.out.print("pool:");
+//        for(int i = 0; i < pool.length; i++){
+//        	System.out.print(pool[i] + " ");
+//        }
+//        System.out.println();
         
         System.out.print("array:");
         for(int i = 0; i < array.length; i++){
@@ -55,8 +60,8 @@ public class Critical
         
         DopeThread dope = new DopeThread();
         for (int i = 0; i < numberOfThreads; i++) {
-            Thread t = new Thread(dope, "Thread " + i);
-            t.start();
+        	Thread t = new Thread(dope);
+          t.start();
         }
     }
 }
