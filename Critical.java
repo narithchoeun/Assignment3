@@ -1,8 +1,8 @@
 public class Critical
 {
-    public static int poolSize = 12;
-    public static int arraySize = 10;
-    public static int numberOfThreads = 3;
+    public static int poolSize = 125;
+    public static int arraySize = 100;
+    public static int numberOfThreads = 20;
     public static String[] pool = new String[poolSize];
     public static String[] array = new String[arraySize];
 
