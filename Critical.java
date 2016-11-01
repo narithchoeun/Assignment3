@@ -40,23 +40,10 @@ public class Critical
         }
     }
 
-    
     public static void main(String[] args)
     {
         fillPool();
         fillArray();
-        
-//        System.out.print("pool:");
-//        for(int i = 0; i < pool.length; i++){
-//        	System.out.print(pool[i] + " ");
-//        }
-//        System.out.println();
-        
-        System.out.print("array:");
-        for(int i = 0; i < array.length; i++){
-        	System.out.print(array[i] + " ");
-        }
-        System.out.println("\n");
         
         DopeThread dope = new DopeThread();
         for (int i = 0; i < numberOfThreads; i++) {
