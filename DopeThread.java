@@ -3,25 +3,21 @@ import java.util.concurrent.locks.ReentrantLock;
 class DopeThread implements Runnable 
 {
     private ReentrantLock lock = new ReentrantLock();
-    private int operationCount = 500, threadNum = 20;
-//    private long totalSearchWaitTime = 0, totalReplaceWaitTime = 0;
-    private long[] searchTimes = new long[20];
-    private int[] searchCtr = new int[20];
-//    private double[] searchAvg = new double[threadNum];
-    private double searchAvg = 0, replaceAvg = 0;
+    private int operationCount = 10, threadNum = 20;
+    private double searchAvg = 0, replaceAvg = 0, searchSigma = 0, replaceSigma = 0;
+    private long[] searchTimes = new long[threadNum];
     private long[] replaceTimes = new long[threadNum];
-    private int[] replaceCtr = new int[threadNum];
-//    private double[] replaceAvg = new double[threadNum];
     
     //runs thread for a set amount of operations
     public void run() {
     	for(int i = 0; i < operationCount; i++){
         runOperation();
     	}
-    
-//    	printList();
-    	average();
-    	standardDeviation();
+    	if (Thread.currentThread().getId()-(long)8 == 19){
+      	average();
+      	standardDeviation();
+    		printStat();
+    	}
     }
     
 
@@ -35,15 +31,9 @@ class DopeThread implements Runnable
         int num = Critical.randomLength(0, 2500);
 
         if (num < 1900) {
-//          System.out.println(Thread.currentThread().getId()-(long)8 + " finding occurences.");
         	occurrences();
-//        	if (occurences() == 0)
-//        		System.out.println(Thread.currentThread().getId()-(long)8 + " did not find any occurences" );
-//        	System.out.println(Thread.currentThread().getId()-(long)8 + " totalSearchWaitTime: " + totalSearchWaitTime);
         } else {
-//        	System.out.println(Thread.currentThread().getId()-(long)8 + " replacing.");
           replace();
-//        	System.out.println(Thread.currentThread().getId()-(long)8 + " totalReplaceWaitTime: " + totalReplaceWaitTime);
         }
     }
 
@@ -53,19 +43,13 @@ class DopeThread implements Runnable
         String randomString = Critical.pool[Critical.randomLength(0,Critical.poolSize)];
         int count = 0;
         long startTime = 0, endTime = 0, totalTime = 0;
-        searchCtr[(int)Thread.currentThread().getId()-8] += 1;
-//        System.out.println(Thread.currentThread().getId()-(long)8 + " trying to find " + randomString);
         for(int i = 0; i < Critical.array.length; i++) {
         	if (randomString.equals(Critical.array[i])) {
-//        		System.out.println(Thread.currentThread().getId()-(long)8 + " contains " + randomString + " attempting to lock");
         		startTime = System.nanoTime();
         		lock.lock();
-//        		System.out.println(Thread.currentThread().getId()-(long)8 + " locked critical section");
         		try {
         			endTime = System.nanoTime();
         			totalTime = endTime - startTime;
-//        			System.out.println(Thread.currentThread().getId()-(long)8 + " waited " + totalTime + "ns to find " + randomString);
-//        			System.out.println(Thread.currentThread().getId()-(long)8 + " total being added: " + totalSearchWaitTime + " " + totalTime);
         			searchTimes[(int)Thread.currentThread().getId()-8] += totalTime;
         			
 	        		count++;
@@ -86,19 +70,13 @@ class DopeThread implements Runnable
         String randomTwo = Critical.pool[Critical.randomLength(0,Critical.poolSize)];
         long startTime = 0, endTime = 0, totalTime = 0;
 
-        replaceCtr[(int)Thread.currentThread().getId()-8] += 1;
-//        System.out.println(Thread.currentThread().getId() + " trying to replace " + randomOne + " with " + randomTwo);
         for(int i = 0; i < Critical.array.length; i++) {
             if (randomOne.equals(Critical.array[i])){
-//          		System.out.println(Thread.currentThread().getId() + " contains " + randomOne + " attempting to lock");
             	startTime = System.nanoTime();
             	lock.lock();
-//          		System.out.println(Thread.currentThread().getId()-(long)8 + " locked critical section");
             	try {
             		endTime = System.nanoTime();
             		totalTime = endTime - startTime;
-//          			System.out.println(Thread.currentThread().getId()-(long)8 + " total being added: " + totalReplaceWaitTime + " " + totalTime);
-//            		System.out.println(Thread.currentThread().getId()-(long)8 + " waited " + totalTime + "ns to replace " + Critical.array[i] + " to " + randomTwo);
             		replaceTimes[(int)Thread.currentThread().getId()-8] += totalTime;
             		Critical.array[i] = randomTwo;
             		break;
@@ -110,30 +88,6 @@ class DopeThread implements Runnable
             }
         }
     }
-
-//    private synchronized void printList(){
-//    	System.out.print("searchTimes: ");
-//    	for (int i = 0; i < 20; i++){
-//    		System.out.print(searchTimes[i] + " ");
-//    	}
-//    	System.out.println();
-//    	System.out.print("searchCtr: ");
-//    	for (int i = 0; i < 20; i++){
-//    		System.out.print(searchCtr[i] + " ");
-//    	}
-//    	System.out.println();
-//    	
-//    	System.out.print("replaceTimes: ");
-//    	for (int i = 0; i < replaceTimes.length; i++){
-//    		System.out.print(replaceTimes[i] + " ");
-//    	}
-//    	System.out.println();
-//    	System.out.print("replaceCtr: ");
-//    	for (int i = 0; i < 20; i++){
-//    		System.out.print(replaceCtr[i] + " ");
-//    	}
-//    	System.out.println();
-//    }
     
     // calculates the average search and replace wait time 
     private synchronized void average(){
@@ -151,9 +105,22 @@ class DopeThread implements Runnable
     		replaceSum += Math.pow((replaceTimes[i] - replaceAvg), 2);
     	}
     	
-    	double searchSigma = Math.sqrt(searchSum/threadNum);
-    	double replaceSigma = Math.sqrt(replaceSum/threadNum);
-    	
+    	searchSigma = Math.sqrt(searchSum/threadNum);
+    	replaceSigma = Math.sqrt(replaceSum/threadNum);
+    }
+    
+    // prints the search / replace times along with the deviation and average of all the threads.
+    private synchronized void printStat(){
+    	System.out.print("searchTimes: ");
+    	for (int i = 0; i < 20; i++){
+    		System.out.print(searchTimes[i] + " ");
+    	}
+    	System.out.println();
+    	System.out.print("replaceTimes: ");
+    	for (int i = 0; i < replaceTimes.length; i++){
+    		System.out.print(replaceTimes[i] + " ");
+    	}
+    	System.out.println();
     	System.out.println("search deviation: " + searchSigma + "\n"
     			+ "search average: " + searchAvg + "\n"
     			+ "replace deviation: " + replaceSigma + "\n"
